@@ -86,7 +86,7 @@ for (const m of catalog) {
 
 const header = `// The models an account is offered before anyone has signed in — the seed
 // magpie and OpenCode read for the provider. Regenerate with
-// \`bun scripts/refresh-models.mjs\` (see scripts/refresh-models.mjs): it
+// \`bun refresh-models.mjs\` (beside this seed): it
 // reads amr-link's catalog at the signed-in account's key, which is the same
 // list a signed-in account is given again on every listing.
 //
