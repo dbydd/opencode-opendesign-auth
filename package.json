@@ -1,11 +1,23 @@
 {
   "name": "opencode-opendesign-auth",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "OpenCode provider plugin: Open Design Cloud (Design Plan, Vela/AMR)",
   "type": "module",
   "main": "./index.mjs",
-  "files": ["index.mjs", "models.mjs", "refresh-models.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "opendesign", "provider", "magpie", "magpie-plugin"],
+  "files": [
+    "index.mjs",
+    "models.mjs",
+    "refresh-models.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "opendesign",
+    "provider",
+    "magpie",
+    "magpie-plugin"
+  ],
   "license": "MIT",
   "author": "dbydd",
   "homepage": "https://github.com/dbydd/opencode-opendesign-auth#readme",

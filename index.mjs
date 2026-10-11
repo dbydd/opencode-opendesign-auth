@@ -13,7 +13,8 @@
 
 import { hostname } from "node:os"
 
-import { version } from "./package.json" with { type: "json" }
+// JSON modules have a default export only, in Bun as in Node
+import pkg from "./package.json" with { type: "json" }
 
 import { MODELS } from "./models.mjs"
 
@@ -21,7 +22,7 @@ const ID = "opendesign"
 const CONTROL = "https://amr-api.open-design.ai"
 const LINK = "https://amr-link.open-design.ai/v1"
 const NPM = "@ai-sdk/openai" // the Responses API, at LINK
-const SOURCE = "opencode-opendesign-auth/" + version // as the manifest has it
+const SOURCE = "opencode-opendesign-auth/" + pkg.version // as the manifest has it
 const CLI_VERSION = "0.1.4" // what the sign-in says it is, as the CLI does
 const TIMEOUT = 20_000
 const HOUR = 3600
@@ -415,6 +416,6 @@ export const OpenDesignAuthPlugin = async () => {
   }
 }
 
-// testHooks is what the tests read through; magpie calls every exported
+// _internal is what the tests read through; magpie calls every exported
 // function as a plugin, so only the plugin itself is exported bare.
 export const _internal = { authOf, allowances, controlKeyOf, credits, modelsOf, money, runtimeKeyOf, said, thePlan, usedPercent, waitForDevice, windowName, when, workspaceOf }
