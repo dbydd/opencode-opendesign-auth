@@ -13,6 +13,8 @@
 
 import { hostname } from "node:os"
 
+import { MODELS } from "./models.mjs"
+
 const ID = "opendesign"
 const CONTROL = "https://amr-api.open-design.ai"
 const LINK = "https://amr-link.open-design.ai/v1"
@@ -229,35 +231,58 @@ function thePlan(summary, tier) {
   return "Design Plan " + t[0].toUpperCase() + t.slice(1)
 }
 
-// modelsOf() shapes amr-link's live catalog as magpie's models: the
-// vendor's own limits, modalities and cost words. Nothing is embedded, so
-// the list is whatever the account's plan entitles it to right now.
+// modelOf turns one model's facts — models.mjs's, or amr-link's catalog
+// read again — into the model magpie shows.
+function modelOf(id, m) {
+  const rate = COST[text(m?.cost)]
+  const thinking = THINKING[text(m?.capability)]
+  const context = Number(m?.context)
+  const output = Number(m?.output)
+  const input = Array.isArray(m?.input) ? m.input.filter((x) => typeof x === "string" && x !== "text") : []
+  return {
+    id,
+    name: text(m?.name) || id,
+    attachment: true,
+    tool_call: true,
+    reasoning: thinking ?? !!m?.reasoning,
+    ...(rate && { rate }),
+    limit: {
+      context: Number.isFinite(context) && context > 0 ? context : 200_000,
+      output: Number.isFinite(output) && output > 0 ? output : 32_000,
+    },
+    modalities: { input: ["text", ...input], output: ["text"] },
+  }
+}
+
+// facts() is amr-link's catalog entry in the seed's own shape.
+function facts(m) {
+  const meta = m?.metadata ?? {}
+  const input = Array.isArray(m?.architecture?.input_modalities)
+    ? m.architecture.input_modalities.filter((x) => typeof x === "string" && x !== "text")
+    : []
+  return {
+    context: Number(meta.context_limit),
+    output: Number(meta.context_budget),
+    input,
+    cost: text(meta.cost),
+    capability: text(meta.capability),
+  }
+}
+
+// seed() is what the provider has before anyone signs in, from models.mjs.
+function seed() {
+  return Object.fromEntries(Object.entries(MODELS).map(([id, m]) => [id, modelOf(id, m)]))
+}
+
+// modelsOf() shapes amr-link's live catalog as magpie's models: the list an
+// account's plan entitles it to right now, in the seed's shape. A model the
+// seed knows keeps its name; the catalog carries ids only.
 function modelsOf(catalog) {
   const out = {}
   for (const m of catalog?.data ?? []) {
     const id = text(m?.id)
     if (!id) continue
-    const meta = m?.metadata ?? {}
-    const input = Array.isArray(m?.architecture?.input_modalities)
-      ? m.architecture.input_modalities.filter((x) => typeof x === "string")
-      : []
-    const context = Number(meta.context_limit)
-    const output = Number(meta.context_budget)
-    const rate = COST[text(meta.cost)]
-    const thinking = THINKING[text(meta.capability)]
-    out[id] = {
-      id,
-      name: id,
-      attachment: true,
-      tool_call: true,
-      reasoning: thinking ?? false,
-      ...(rate && { rate }),
-      limit: {
-        ...(Number.isFinite(context) && context > 0 ? { context } : {}),
-        ...(Number.isFinite(output) && output > 0 ? { output } : {}),
-      },
-      modalities: { input: input.length ? input : ["text"], output: ["text"] },
-    }
+    out[id] = modelOf(id, { ...facts(m), name: MODELS[id]?.name ?? id })
   }
   return out
 }
@@ -326,7 +351,7 @@ export const OpenDesignAuthPlugin = async () => {
         npm: NPM,
         api: LINK,
         ...was,
-        models: was.models ?? {},
+        models: { ...seed(), ...(was.models ?? {}) },
       }
     },
     // the plan decides which models an account gets, so the list is read

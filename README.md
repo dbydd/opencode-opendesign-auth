@@ -57,13 +57,25 @@ is there for a machine that can't open the approval page.
 
 ## Models
 
-Nothing is embedded: the list is `amr-link`'s live `/v1/models` for the
-account, read on every listing, so it follows the plan — a personal **Go**
-plan gets the eleven models its catalog enables today, and a different plan
-or a vendor change is picked up without a plugin update. Limits, input
+Nothing is listed per account at request time from anywhere but the vendor:
+magpie calls the plugin's `provider.models`, which reads `amr-link`'s live
+`/v1/models` at that account's key on every listing, so what a signed-in
+account is offered is what its plan entitles it to right now. Limits, input
 modalities and the vendor's own cost words (`rate`, e.g. `x0.5` for "low")
 come from that same catalog; a model whose vendor tier is `advanced` is
 marked as one that reasons.
+
+`models.mjs` is the seed the provider has *before* anyone signs in, which is
+also the list OpenCode reads (it has no live-listing hook). Refresh it from
+the live catalog with:
+
+```bash
+magpie plugin login opendesign            # once, so the key is on hand
+bun scripts/refresh-models.mjs            # or OPENDESIGN_KEY=sk-amr-… bun …
+```
+
+The script keeps the names already chosen — the catalog carries ids only —
+and reads nothing else: no secret is written to the file or printed.
 
 Requests go to the **Responses** API (`@ai-sdk/openai` at
 `https://amr-link.open-design.ai/v1`), which is what an Open Design API key

@@ -134,7 +134,7 @@ test("the account's list is the vendor's own, live", () => {
   expect(Object.keys(models)).toEqual(["gpt-6-luna", "deepseek-v4-pro", "brand-new-9"])
   expect(models["gpt-6-luna"]).toEqual({
     id: "gpt-6-luna",
-    name: "gpt-6-luna",
+    name: "GPT-6 Luna",
     reasoning: false,
     rate: "x0.5",
     tool_call: true,
@@ -143,8 +143,18 @@ test("the account's list is the vendor's own, live", () => {
     modalities: { input: ["text", "image", "file"], output: ["text"] },
   })
   expect(models["deepseek-v4-pro"]).toMatchObject({ reasoning: true, rate: "x2", limit: { context: 1048000, output: 232000 } })
-  // a model without limits in the catalog still gets a workable entry
-  expect(models["brand-new-9"]).toMatchObject({ name: "brand-new-9", reasoning: true, rate: "x1", limit: {}, modalities: { input: ["text", "image"], output: ["text"] } })
+  // a model the seed doesn't know is named by its id, and a catalog entry
+  // without limits still gets a workable entry
+  expect(models["brand-new-9"]).toEqual({
+    id: "brand-new-9",
+    name: "brand-new-9",
+    attachment: true,
+    tool_call: true,
+    reasoning: true,
+    rate: "x1",
+    limit: { context: 200000, output: 32000 },
+    modalities: { input: ["text", "image"], output: ["text"] },
+  })
 })
 
 test("an empty catalog is no models", () => {
@@ -163,8 +173,18 @@ test("the plugin declares the provider and answers its methods", async () => {
     npm: "@ai-sdk/openai",
     api: "https://amr-link.open-design.ai/v1",
   })
-  // no list is embedded: an account's models are what amr-link lists for it
-  expect(cfg.provider.opendesign.models).toEqual({})
+  // the seed models.mjs carries, which a signed-in account's list replaces
+  expect(Object.keys(cfg.provider.opendesign.models)).toHaveLength(11)
+  expect(cfg.provider.opendesign.models["deepseek-v4.1-flash"]).toEqual({
+    id: "deepseek-v4.1-flash",
+    name: "DeepSeek V4.1 Flash",
+    attachment: true,
+    tool_call: true,
+    reasoning: true,
+    rate: "x0.5",
+    limit: { context: 1048000, output: 232000 },
+    modalities: { input: ["text", "image"], output: ["text"] },
+  })
   expect(hooks.auth.provider).toBe("opendesign")
   expect(hooks.auth.methods.map((m) => m.type)).toEqual(["oauth", "api"])
   expect(hooks.provider.id).toBe("opendesign")
