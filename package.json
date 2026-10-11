@@ -1,13 +1,14 @@
 {
   "name": "opencode-opendesign-auth",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "OpenCode provider plugin: Open Design Cloud (Design Plan, Vela/AMR)",
   "type": "module",
   "main": "./index.mjs",
   "files": [
     "index.mjs",
     "models.mjs",
-    "README.md"
+    "README.md",
+    "refresh-models.mjs"
   ],
   "keywords": [
     "opencode",

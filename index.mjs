@@ -13,14 +13,15 @@
 
 import { hostname } from "node:os"
 
+import { version } from "./package.json" with { type: "json" }
+
 import { MODELS } from "./models.mjs"
 
 const ID = "opendesign"
 const CONTROL = "https://amr-api.open-design.ai"
 const LINK = "https://amr-link.open-design.ai/v1"
 const NPM = "@ai-sdk/openai" // the Responses API, at LINK
-const VERSION = "0.1.0"
-const SOURCE = "opencode-opendesign-auth/" + VERSION
+const SOURCE = "opencode-opendesign-auth/" + version // as the manifest has it
 const CLI_VERSION = "0.1.4" // what the sign-in says it is, as the CLI does
 const TIMEOUT = 20_000
 const HOUR = 3600
@@ -319,7 +320,9 @@ export const OpenDesignAuthPlugin = async () => {
         return { windows: [], error: "Open Design refused the account's sign-in — sign in again.", signIn: "expired" }
       }
       if (!preflight.ok) throw new Error(`the Design Plan read answered ${preflight.status} (${said(preflight.body, "no reading")})`)
-      const summary = await api(CONTROL, "/api/v1/billing/summary?timeZone=Asia%2FShanghai", { key: controlKey, signal })
+      // the summary takes a timeZone, but nothing read here depends on it
+      // (only its own updatedAt and usageCount do), so none is sent
+      const summary = await api(CONTROL, "/api/v1/billing/summary", { key: controlKey, signal })
       const plan = preflight.body?.codingPlan ?? null
       const out = {
         plan: thePlan(summary.ok ? summary.body : null, ""),

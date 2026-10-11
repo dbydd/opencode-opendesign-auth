@@ -65,13 +65,12 @@ modalities and the vendor's own cost words (`rate`, e.g. `x0.5` for "low")
 come from that same catalog; a model whose vendor tier is `advanced` is
 marked as one that reasons.
 
-`models.mjs` is the seed the provider has *before* anyone signs in, which is
-also the list OpenCode reads (it has no live-listing hook). Refresh it from
-the live catalog with:
+`models.mjs` is the seed the provider has *before* anyone signs in. Refresh
+it from the live catalog with:
 
 ```bash
-magpie plugin login opendesign            # once, so the key is on hand
-bun scripts/refresh-models.mjs            # or OPENDESIGN_KEY=sk-amr-… bun …
+magpie plugin login opendesign     # once, so the key is on hand
+bun scripts/refresh-models.mjs     # or OPENDESIGN_KEY=sk-amr-… bun …
 ```
 
 The script keeps the names already chosen — the catalog carries ids only —

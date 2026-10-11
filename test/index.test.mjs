@@ -62,9 +62,11 @@ const PREFLIGHT = {
   codingPlan: {
     eligible: true,
     tier: "go",
+    // out of order on purpose: the plugin's own sort is what puts the 5-hour
+    // window first, as the vendor's card shows them
     windows: [
-      { durationSeconds: 18000, usedCredits: "16251", limitCredits: "50000", resetsAt: "2026-10-11T11:36:14.000Z" },
       { durationSeconds: 604800, usedCredits: "16251", limitCredits: "150000", resetsAt: "2026-10-18T06:36:14.000Z" },
+      { durationSeconds: 18000, usedCredits: "16251", limitCredits: "50000", resetsAt: "2026-10-11T11:36:14.000Z" },
     ],
   },
 }

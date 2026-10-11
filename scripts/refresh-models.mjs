@@ -9,6 +9,9 @@
 // after `magpie plugin login opendesign`, and it is never printed or written
 // anywhere but the Authorization header. A name already in models.mjs is
 // kept — the catalog carries ids, not names.
+//
+// magpie runs a plugin host per command, so `magpie plugin login` has to have
+// finished before this reads the key it saved.
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs"
 import { homedir } from "node:os"
