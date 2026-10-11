@@ -275,3 +275,26 @@ test("the API key method takes the key as it is", async () => {
   // magpie's own prompt saves what the user pasted; the plugin adds nothing
   expect(m.authorize).toBeUndefined()
 })
+
+test("everything the manifest ships is on disk", async () => {
+  // `files` naming a file that isn't there ships a package missing it, which
+  // is how 0.1.2 went out without refresh-models.mjs. The manifest is found
+  // by walking up, so this file works in `test/` and at a package root alike.
+  const { existsSync } = await import("node:fs")
+  const { dirname, join } = await import("node:path")
+  const { fileURLToPath } = await import("node:url")
+  let root = dirname(fileURLToPath(import.meta.url))
+  while (!existsSync(join(root, "package.json"))) {
+    const up = dirname(root)
+    if (up === root) throw new Error("no package.json above this test")
+    root = up
+  }
+  const pkg = await Bun.file(join(root, "package.json")).json()
+  for (const f of pkg.files) expect(existsSync(join(root, f))).toBe(true)
+  // the plugin's own imports are among them (npm ships package.json itself,
+  // whatever `files` says)
+  const src = await Bun.file(join(root, pkg.main ?? "index.mjs")).text()
+  const imports = [...src.matchAll(/from "\.\/([^"]+)"/g)].map((m) => m[1]).filter((f) => f !== "package.json")
+  expect(imports.length).toBeGreaterThan(0)
+  for (const spec of imports) expect(pkg.files).toContain(spec)
+})

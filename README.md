@@ -70,7 +70,7 @@ it from the live catalog with:
 
 ```bash
 magpie plugin login opendesign     # once, so the key is on hand
-bun scripts/refresh-models.mjs     # or OPENDESIGN_KEY=sk-amr-… bun …
+bun refresh-models.mjs             # or OPENDESIGN_KEY=sk-amr-… bun …
 ```
 
 The script keeps the names already chosen — the catalog carries ids only —

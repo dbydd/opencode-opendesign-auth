@@ -2,8 +2,8 @@
 // signed in — from amr-link's live catalog, which is the account's own list
 // (it is what the plugin reads for a signed-in account too).
 //
-//   bun scripts/refresh-models.mjs            # key from magpie's sign-in
-//   OPENDESIGN_KEY=sk-amr-… bun scripts/refresh-models.mjs
+//   bun refresh-models.mjs                    # key from magpie's sign-in
+//   OPENDESIGN_KEY=sk-amr-… bun refresh-models.mjs
 //
 // The key is the account's runtime key: magpie keeps it in plugin-auth.json
 // after `magpie plugin login opendesign`, and it is never printed or written
@@ -18,14 +18,14 @@ import { homedir } from "node:os"
 import { dirname, join } from "node:path"
 import { fileURLToPath, pathToFileURL } from "node:url"
 
-// the file this writes: beside the script (a package of its own), else one
-// level up (this repository's scripts/ with models.mjs at its root)
+// the seed this writes, beside the script: the package root here, and the
+// package root when npm installs it
 const HERE = dirname(fileURLToPath(import.meta.url))
-const TARGET = [join(HERE, "models.mjs"), join(HERE, "..", "models.mjs")].find(existsSync)
+const TARGET = join(HERE, "models.mjs")
 const API = "https://amr-link.open-design.ai/v1"
 
-if (!TARGET) {
-  console.error("no models.mjs beside this script or one level up")
+if (!existsSync(TARGET)) {
+  console.error("no models.mjs beside this script")
   process.exit(1)
 }
 
