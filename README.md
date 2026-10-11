@@ -13,8 +13,15 @@ magpie plugin add opencode-opendesign-auth
 magpie plugin login opendesign
 ```
 
-Or from this repository: `magpie plugin add github:dbydd/opencode-opendesign-auth`,
-or a clone: `magpie plugin add ./opencode-opendesign-auth`.
+Either way works: the npm package by name, or this repository —
+`magpie plugin add github:dbydd/opencode-opendesign-auth` — or a clone:
+`magpie plugin add ./opencode-opendesign-auth`. A folder or git install is
+what a plugin still being changed wants: the terminal loads it as it is on
+disk each run, where an npm copy is a version.
+
+While the npm search index hasn't caught up with a fresh publish (its own
+lag, usually minutes), `magpie plugin add <name>` and the GitHub-tagged card
+under Plugins → Discover both work: neither goes through that index.
 
 ## What it signs in to
 
