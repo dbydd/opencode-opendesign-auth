@@ -8,6 +8,14 @@ balance where every other subscription's usage shows.
 Works in [magpie](https://usemagpie.ai) (which runs OpenCode provider plugins)
 and in OpenCode.
 
+```
+magpie plugin add opencode-opendesign-auth
+magpie plugin login opendesign
+```
+
+Or from this repository: `magpie plugin add github:dbydd/opencode-opendesign-auth`,
+or a clone: `magpie plugin add ./opencode-opendesign-auth`.
+
 ## What it signs in to
 
 Open Design's cloud is two planes:
@@ -90,3 +98,21 @@ models of its own. Delete the custom provider — `magpie provider rm
 opendesign` — and the plugin's provider takes the plain id, so agent
 configs pointing at `opendesign/<model>` keep working, now with the
 allowance card.
+
+## The allowance in routing
+
+The windows are gating windows (magpie's `aside` is left off), so magpie's
+own routing reads them like any subscription's:
+
+* a window magpie reads as used up makes the account count as used up, so
+  routing groups skip it and a direct call to `opendesign/<model>` is refused
+  with a 429 until that window renews;
+* `magpie provider account-cap opendesign <account> [percent|off]` holds the
+  account at a share of each window, and `--window "5 hours" 70` caps one
+  window alone, which is how to leave headroom instead of spending the plan
+  to the last credit.
+
+Since Open Design falls back to the wallet balance once the Design Plan
+allowance is out, an exhausted window holds the account rather than spending
+the wallet. Set the account to spend its credits, or cap the windows, to
+choose which of the two magpie does.

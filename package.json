@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./index.mjs",
   "files": ["index.mjs", "README.md"],
-  "keywords": ["opencode", "opencode-plugin", "opendesign", "provider", "magpie"],
+  "keywords": ["opencode", "opencode-plugin", "opendesign", "provider", "magpie", "magpie-plugin"],
   "license": "MIT",
   "author": "dbydd",
   "homepage": "https://github.com/dbydd/opencode-opendesign-auth#readme",
